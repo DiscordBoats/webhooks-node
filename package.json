@@ -5,9 +5,6 @@
     "main": "lib/index.js",
     "author": "auguwu <augu@voided.pw>",
     "types": "index.d.ts",
-    "dependencies": {
-        "ws": "6.2.0"
-    },
     "peerDependencies": {
         "ioredis": "4.6.2",
         "enmap": "4.8.1"
