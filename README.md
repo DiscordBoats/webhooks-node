@@ -1,4 +1,4 @@
-# Laffey <img src="https://azurlane.koumakan.jp/w/images/2/2a/Laffey.png" align="left">
+# Laffey <img src="https://azurlane.koumakan.jp/w/images/2/2a/Laffey.png" align="right" width="440px" height="497px">
 
 > **Webhook Handler for [discord.boats](https://discord.boats)**
 
