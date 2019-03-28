@@ -1,6 +1,13 @@
 # Laffey <img src="https://azurlane.koumakan.jp/w/images/2/2a/Laffey.png" align="right" width="400px" height="497px">
 
-> **Webhook Handler for [discord.boats](https://discord.boats)**
+> **Webhook Handler for [discord.boats](https://discord.boats).**
+>
+> [GitHub](https://github.com/auguwu/laffey) **|** [NPM](https://npmjs.com/package/laffey) **|** [Documentation](https://docs.augu.me/laffey)
+
+## Plans
+
+- Add custom storages
+- (maybe?) Use TypeScript
 
 ## Usage
 
@@ -18,12 +25,26 @@ const handler = new Laffey({
 });
 
 handler
-    .on('vote', (voter) => {
-        console.log(voter.username + ' has voted!');
-    })
-    .on('listen', () => console.log(`Listening on port ${handler.port}`));
+    .on('vote', (voter) => console.log(`${voter.tag} has voted!`))
+    .on('listen', () => console.log(`Listening on port ${handler.port}`))
+    .listen();
+```
 
-handler.listen();
+## Typescript Usage
+
+```ts
+import { Laffey, Storages, DiscordVoter } from 'laffey';
+
+const handler = new Laffey({
+    storage: new Storages.Enmap(),
+    port: 7700,
+    auth: 'yesowo'
+});
+
+handler
+    .on('vote', (voter: DiscordVoter) => console.log(`${voter.tag} has voted!`))
+    .on('listen', () => console.log('Laffey is now listening!'))
+    .listen();
 ```
 
 ## License
