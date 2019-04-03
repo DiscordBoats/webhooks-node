@@ -7,7 +7,6 @@
 ## Plans
 
 - Add custom storages
-- (maybe?) Use TypeScript
 
 ## Usage
 
@@ -27,7 +26,7 @@ const handler = new Laffey({
 handler
     .on('vote', (voter) => console.log(`${voter.tag} has voted!`))
     .on('listen', () => console.log(`Listening on port ${handler.port}`))
-    .listen();
+    .listen(); // It listens and emits the listen event /\
 ```
 
 ## Typescript Usage
@@ -51,7 +50,7 @@ handler
 
 > [laffey](https://github.com/auguwu/laffey) is made by [auguwu](https://augu.me) and is released under the MIT license
 >
-> **Laffey is a shipgirl from the game: Azur Lane; all artwork is copyrighted to them**
+> **Laffey is a shipgirl from the game: Azur Lane; all copyrighted infrigment belong to Yostar Inc**
 
 ```
 Copyright (c) 2019-present auguwu
