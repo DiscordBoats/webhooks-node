@@ -2,7 +2,7 @@
 
 > **Webhook Handler for [discord.boats](https://discord.boats).**
 >
-> [GitHub](https://github.com/auguwu/laffey) **|** [NPM](https://npmjs.com/package/laffey) **|** [Documentation](https://docs.augu.me/laffey)
+> [GitHub](https://github.com/auguwu/laffey) **|** [NPM](https://npmjs.com/package/laffey) **|** [Documentation](https://docs.augu.dev/laffey)
 
 ## Plans
 
@@ -19,7 +19,7 @@ const {
 } = require('laffey');
 
 const handler = new Laffey({
-    storage: new Redis(),
+    storage: new Redis({ host: '', port: 6379, key: 'voters' }),
     port: 7700,
     auth: 'youshallnotpass',
     path: '/webhook'
@@ -37,10 +37,10 @@ handler
 import { Laffey, Storages, DiscordVoter } from 'laffey';
 
 const handler = new Laffey({
-    storage: new Storages.Enmap(),
+    storage: new Storages.Redis({ host: '', port: 6379, key: 'voters' }),
     port: 7700,
     auth: 'yesowo',
-    path: '/webhook/
+    path: '/webhook'
 });
 
 handler
@@ -61,68 +61,41 @@ Thanks to contribute to Laffey's repo!
 4) If everything is ok, pull request
 5) You're done!
 
-### Notes
+## Custom Storages
 
-> 1) When installing Laffey and you get this error:
+> This is an example of how to create a custom storage
 
-```
-Exit code: 1
-Command: node-gyp rebuild
-Arguments:
-Directory: C:\Users\ohlookitsAugust\Documents\Projects\Packages\nodejs\laffey\node_modules\integer
-Output:
-C:\Users\ohlookitsAugust\Documents\Projects\Packages\nodejs\laffey\node_modules\integer>if not defined npm_config_node_gyp (node "C:\Program Files\nodejs\node_modules\npm\bin\node-gyp-bin\\..\..\node_modules\node-gyp\bin\node-gyp.js" rebuild )  else (node "" rebuild )
-gyp info it worked if it ends with ok
-gyp info using node-gyp@3.6.2
-gyp info using node@10.6.0 | win32 | x64
-gyp info spawn C:\Python27\python.exe
-gyp info spawn args [ 'C:\\Program Files\\nodejs\\node_modules\\npm\\node_modules\\node-gyp\\gyp\\gyp_main.py',
-gyp info spawn args   'binding.gyp',
-gyp info spawn args   '-f',
-gyp info spawn args   'msvs',
-gyp info spawn args   '-G',
-gyp info spawn args   'msvs_version=2015',
-gyp info spawn args   '-I',
-gyp info spawn args   'C:\\Users\\ohlookitsAugust\\Documents\\Projects\\Packages\\nodejs\\laffey\\node_modules\\integer\\build\\config.gypi',
-gyp info spawn args   '-I',
-gyp info spawn args   'C:\\Program Files\\nodejs\\node_modules\\npm\\node_modules\\node-gyp\\addon.gypi',
-gyp info spawn args   '-I',
-gyp info spawn args   'C:\\Users\\ohlookitsAugust\\.node-gyp\\10.6.0\\include\\node\\common.gypi',
-gyp info spawn args   '-Dlibrary=shared_library',
-gyp info spawn args   '-Dvisibility=default',
-gyp info spawn args   '-Dnode_root_dir=C:\\Users\\ohlookitsAugust\\.node-gyp\\10.6.0',
-gyp info spawn args   '-Dnode_gyp_dir=C:\\Program Files\\nodejs\\node_modules\\npm\\node_modules\\node-gyp',
-gyp info spawn args   '-Dnode_lib_file=C:\\Users\\ohlookitsAugust\\.node-gyp\\10.6.0\\<(target_arch)\\node.lib',
-gyp info spawn args   '-Dmodule_root_dir=C:\\Users\\ohlookitsAugust\\Documents\\Projects\\Packages\\nodejs\\laffey\\node_modules\\integer',
-gyp info spawn args   '-Dnode_engine=v8',
-gyp info spawn args   '--depth=.',
-gyp info spawn args   '--no-parallel',
-gyp info spawn args   '--generator-output',
-gyp info spawn args   'C:\\Users\\ohlookitsAugust\\Documents\\Projects\\Packages\\nodejs\\laffey\\node_modules\\integer\\build',
-gyp info spawn args   '-Goutput_dir=.' ]
-gyp info spawn msbuild
-gyp info spawn args [ 'build/binding.sln',
-gyp info spawn args   '/clp:Verbosity=minimal',
-gyp info spawn args   '/nologo',
-gyp info spawn args   '/p:Configuration=Release;Platform=x64' ]
-Building the projects in this solution one at a time. To enable parallel build, please add the "/m" switch.
-{{PATH}}laffey\node_modules\integer\build\integer.vcxproj(21,3): error MSB4019: The imported project "C:\Microsoft.Cpp.Default.props" was not found. Confirm that the path in the <Import> declaration is correct, and that the file exists on disk.
-gyp ERR! build error
-gyp ERR! stack Error: `msbuild` failed with exit code: 1
-gyp ERR! stack     at ChildProcess.onExit (C:\Program Files\nodejs\node_modules\npm\node_modules\node-gyp\lib\build.js:258:23)
-gyp ERR! stack     at ChildProcess.emit (events.js:182:13)
-gyp ERR! stack     at Process.ChildProcess._handle.onexit (internal/child_process.js:237:12)
-gyp ERR! System Windows_NT 10.0.17134
-gyp ERR! command "C:\\Program Files\\nodejs\\node.exe" "C:\\Program Files\\nodejs\\node_modules\\npm\\node_modules\\node-gyp\\bin\\node-gyp.js" "rebuild"
-gyp ERR! cwd {{PATH}}\laffey\node_modules\integer
-gyp ERR! node -v v10.6.0
-gyp ERR! node-gyp -v v3.6.2
-gyp ERR! not ok
+### JavaScript
+
+```js
+const { Storage } = require('laffey');
+
+module.exports = class MyStorage extends Storage {
+    constructor(options) {
+        super('StorageName');
+    }
+
+    add(pkt) {}
+    pop(pkt) {}
+    size() {}
+}
 ```
 
-> Linux/MacOS: `rm -fr node_modules && npm i (or yarn)`
-> 
-> Windows: Soon
+### TypeScript 
+
+```ts
+import { Storage } from 'laffey';
+
+export default class MyStorage extends Storage {
+    constructor(options: {}) {
+        super('StorageName');
+    }
+
+    add(pkt: any) {}
+    pop(pkt: any) {}
+    size() {}
+}
+```
 
 ## License
 
