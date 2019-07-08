@@ -4,29 +4,22 @@
 >
 > [GitHub](https://github.com/auguwu/laffey) **|** [NPM](https://npmjs.com/package/laffey) **|** [Documentation](https://docs.augu.dev/laffey)
 
-## Plans
-
-- Add custom storages
-- Create a new storage: Redis (who have a redis compartment and dont wanna use enmap)
-
 ## Usage
 
 ```js
 // Storages: Redis, enmap, more soon?
 const {
-    Laffey,
-    Storage: { Redis }
+    Instance
 } = require('laffey');
 
-const handler = new Laffey({
-    storage: new Redis({ host: '', port: 6379, key: 'voters' }),
+const handler = new Instance({
     port: 7700,
     auth: 'youshallnotpass',
     path: '/webhook'
 });
 
 handler
-    .on('vote', (voter) => console.log(`${voter.tag} has voted!`))
+    .on('vote', (voter, bot) => console.log(`${voter.username} has voted ${bot.name}`))
     .on('listen', () => console.log(`Listening on port ${handler.port}`))
     .listen(); // It listens and emits the listen event /\
 ```
@@ -34,17 +27,16 @@ handler
 ## Typescript Usage
 
 ```ts
-import { Laffey, Storages, DiscordVoter } from 'laffey';
+import { Laffey, DiscordVoter, DiscordBot } from 'laffey';
 
 const handler = new Laffey({
-    storage: new Storages.Redis({ host: '', port: 6379, key: 'voters' }),
     port: 7700,
     auth: 'yesowo',
     path: '/webhook'
 });
 
 handler
-    .on('vote', (voter: DiscordVoter) => console.log(`${voter.tag} has voted!`))
+    .on('vote', (voter: DiscordVoter, bot: DiscordBot) => console.log(`${voter.username} has voted ${bot.name}`))
     .on('listen', () => console.log('Laffey is now listening!'))
     .listen();
 ```
@@ -60,42 +52,6 @@ Thanks to contribute to Laffey's repo!
 3) Run `npm run test` or `yarn test`
 4) If everything is ok, pull request
 5) You're done!
-
-## Custom Storages
-
-> This is an example of how to create a custom storage
-
-### JavaScript
-
-```js
-const { Storage } = require('laffey');
-
-module.exports = class MyStorage extends Storage {
-    constructor(options) {
-        super('StorageName');
-    }
-
-    add(pkt) {}
-    pop(pkt) {}
-    size() {}
-}
-```
-
-### TypeScript 
-
-```ts
-import { Storage } from 'laffey';
-
-export default class MyStorage extends Storage {
-    constructor(options: {}) {
-        super('StorageName');
-    }
-
-    add(pkt: any) {}
-    pop(pkt: any) {}
-    size() {}
-}
-```
 
 ## License
 

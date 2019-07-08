@@ -1,15 +1,12 @@
 {
     "name": "laffey",
-    "description": "Webhook handler for discord.boats",
+    "description": "🏢 Webhook handler for discord.boats",
     "version": "0.0.1",
     "main": "dist/index.js",
     "author": "auguwu <augu@voided.pw>",
     "types": "index.d.ts",
     "repository": {
         "url": "https://github.com/auguwu/laffey"
-    },
-    "peerDependencies": {
-        "ioredis": "4.11.1"
     },
     "devDependencies": {
         "@types/ioredis": "4.0.12",
