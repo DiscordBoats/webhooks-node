@@ -2,7 +2,7 @@
 
 > **Webhook Handler for [discord.boats](https://discord.boats).**
 >
-> [GitHub](https://github.com/auguwu/laffey) **|** [NPM](https://npmjs.com/package/laffey) **|** [Documentation](https://docs.augu.dev/laffey)
+> [GitHub](https://github.com/auguwu/laffey) **|** [NPM](https://npmjs.com/package/laffey)
 
 ## JavaScript Usage
 
