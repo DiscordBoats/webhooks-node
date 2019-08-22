@@ -107,7 +107,8 @@ export default class Instance extends EventEmitter {
                         const user = await this.fetchUser(data.user.id);
                         const bot = await this.fetchBot(data.bot.id);
                         this.emit('vote', user, bot);
-                        res.statusCode = 400;
+                        this.requests++;
+                        res.statusCode = 200;
                         res.end();
                     } else {
                         this.emit('error', 'No data was parsed');
