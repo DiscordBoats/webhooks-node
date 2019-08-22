@@ -1,16 +1,13 @@
-# Laffey <img src="https://azurlane.koumakan.jp/w/images/2/2a/Laffey.png" align="right" width="400px" height="497px">
+# Laffey
 
 > **Webhook Handler for [discord.boats](https://discord.boats).**
 >
 > [GitHub](https://github.com/auguwu/laffey) **|** [NPM](https://npmjs.com/package/laffey) **|** [Documentation](https://docs.augu.dev/laffey)
 
-## Usage
+## JavaScript Usage
 
 ```js
-// Storages: Redis, enmap, more soon?
-const {
-    Instance
-} = require('laffey');
+const { Instance } = require('laffey');
 
 const handler = new Instance({
     port: 7700,
@@ -27,9 +24,9 @@ handler
 ## Typescript Usage
 
 ```ts
-import { Laffey, DiscordVoter, DiscordBot } from 'laffey';
+import { Instance, DiscordVoter, DiscordBot } from 'laffey';
 
-const handler = new Laffey({
+const handler = new Instance({
     port: 7700,
     auth: 'yesowo',
     path: '/webhook'
@@ -57,10 +54,10 @@ Thanks to contribute to Laffey's repo!
 
 > [laffey](https://github.com/auguwu/laffey) is made by [auguwu](https://augu.me) and is released under the MIT license
 >
-> **Laffey is a shipgirl from the game: Azur Lane; all copyrighted infrigment belong to Yostar Inc**
+> **Laffey is a shipgirl from the game: Azur Lane; all copyrighted infrigment of images belongs to Yostar Inc**
 
 ```
-Copyright (c) 2019-present auguwu
+Copyright (c) 2019 auguwu
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
