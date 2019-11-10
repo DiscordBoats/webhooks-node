@@ -13,6 +13,6 @@
         "@types/node": "12.0.10",
         "ioredis": "4.11.1",
         "typescript": "3.5.2",
-        "wumpfetch": "0.2.13"
+        "wumpfetch": "0.3.1"
     }
 }
