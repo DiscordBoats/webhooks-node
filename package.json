@@ -1,11 +1,12 @@
 {
     "name": "laffey",
     "description": "🏢 Webhook handler for discord.boats",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "main": "build/index.js",
     "author": "August <augu@voided.pw>",
     "types": "index.d.ts",
     "license": "MIT",
+    "files": ["build/", "index.d.ts"],
     "repository": {
         "type": "git",
         "url": "https://github.com/auguwu/laffey"
