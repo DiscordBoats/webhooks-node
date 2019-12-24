@@ -1,18 +1,36 @@
 {
     "name": "laffey",
     "description": "🏢 Webhook handler for discord.boats",
-    "version": "0.0.2",
-    "main": "dist/index.js",
-    "author": "auguwu <augu@voided.pw>",
+    "version": "0.1.0",
+    "main": "build/index.js",
+    "author": "August <augu@voided.pw>",
     "types": "index.d.ts",
+    "license": "MIT",
     "repository": {
+        "type": "git",
         "url": "https://github.com/auguwu/laffey"
     },
-    "devDependencies": {
-        "@types/ioredis": "4.14.3",
-        "@types/node": "12.12.22",
-        "ioredis": "4.14.1",
-        "typescript": "3.7.4",
+    "scripts": {
+        "prepare": "yarn docs && yarn build",
+        "build": "yarn lint && rm -fr bulld && tsc",
+        "lint": "eslint src --ext .ts --fix",
+        "docs": "rm -fr docs && typedoc && touch docs/.nojekyll"
+    },
+    "dependencies": {
+        "@augu/immutable": "0.1.1",
         "wumpfetch": "0.3.1"
+    },
+    "devDependencies": {
+        "@augu/eslint-config": "1.0.2",
+        "@types/node": "12.12.22",
+        "@typescript-eslint/eslint-plugin": "2.13.0",
+        "@typescript-eslint/parser": "2.13.0",
+        "eslint": "6.8.0",
+        "typedoc": "0.15.5",
+        "typescript": "3.7.4"
+    },
+    "optionalDependencies": {
+        "@types/ioredis": "4.14.3",
+        "ioredis": "4.14.1"
     }
 }

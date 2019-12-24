@@ -1,20 +1,30 @@
 {
     "compilerOptions": {
-        "target": "esnext",
-        "module": "commonjs",
-        "lib": [ "es2015", "es2016", "esnext" ],
+        "target": "ESNext",
+        "module": "CommonJS",
+        "lib": [
+            "ES2015",
+            "ES2016",
+            "ES2017",
+            "ES2018",
+            "ESNext"
+        ],
         "declaration": false,
-        "outDir": "./dist",
-        "rootDir": "./lib",
         "strict": true,
+        "outDir": "./build",
+        "rootDir": "./src",
         "noImplicitAny": false,
         "moduleResolution": "node",
-        "types": [ "node" ],
+        "types": ["node"],
         "allowSyntheticDefaultImports": true,
         "esModuleInterop": true,
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true
     },
-    "include": [ "lib/**/*" ],
-    "exclude": [ "node_modules" ]
+    "include": [
+        "src/**/*"
+    ],
+    "exclude": [
+        "node_modules"
+    ]
 }

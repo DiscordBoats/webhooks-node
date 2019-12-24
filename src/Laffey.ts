@@ -1,0 +1,158 @@
+import { Server, createServer, ServerResponse, IncomingMessage } from 'http';
+import User, { UserPacket } from './entities/User';
+import { get, setDefaults } from 'wumpfetch';
+import Bot, { BotPacket } from './entities/Bot';
+import { EventEmitter } from 'events';
+import MemoryStorage from './storages/MemoryStorage';
+import Storage from './storages/Storage';
+
+/**
+ * Any additional options to add
+ */
+interface Options {
+    /**
+     * The authenication key to use
+     */
+    auth: string;
+
+    /**
+     * The storage to use (default: MemoryStorage)
+     */
+    storage?: Storage;
+
+    /**
+     * Webhook options (to send events to)
+     */
+    webhook?: {
+        enabled: boolean;
+        url: string | null;
+    }
+}
+
+export default class Laffey extends EventEmitter {
+    /**
+     * The port to use
+     */
+    public port: number;
+
+    /**
+     * The path for discord.boats to send packets to
+     */
+    public path: string;
+
+    /**
+     * The authenication key to use
+     */
+    public authKey: string;
+
+    /**
+     * The webhook options
+     */
+    public webhook: { enabled: boolean; url: string | null; }
+
+    /**
+     * The storage to add packets of data
+     */
+    public storage: Storage;
+
+    /**
+     * The HTTP server
+     */
+    public server: Server;
+
+    /**
+     * How many times discord.boats requested to us
+     */
+    public requests: number = 0;
+
+    /**
+     * Creates a new Laffey instance
+     * @param port The port to use
+     * @param path The path to use
+     * @param options Any additional options
+     * @example
+     * new Laffey(6969, '/webhook');
+     */
+    constructor(port: number, path: string, options: Options) {
+        super();
+
+        this.storage = options.storage ?? new MemoryStorage();
+        this.webhook = options.webhook ?? { enabled: false, url: null };
+        this.authKey = options.auth;
+        this.server = createServer((req, res) => this.onRequest.apply(this, [req, res]));
+        this.port   = port;
+        this.path   = path;
+    }
+
+    async executeWebhook(payload: any) {
+        if (!this.webhook.enabled) throw new Error('Discord Webhook is not enabled');
+        await get({
+            url: `${this.webhook.url!}?wait=true`,
+            method: 'POST',
+            data: {
+                embeds: [payload]
+            }
+        }).send();
+    }
+
+    private async fetchUser(id: string) {
+        const req = await get({
+            url: `https://discord.boats/api/v2/user/${id}`,
+            method: 'GET'
+        }).send();
+        const data = req.json<UserPacket>();
+        return new User(data);
+    }
+
+    private onRequest(req: IncomingMessage, res: ServerResponse) {
+        if (req.url === this.path && req.method === 'POST') {
+            if (!req.headers.authorization) {
+                this.emit('error', 'No "Authorization" header was provided');
+                res.statusCode = 401;
+                res.end();
+            }
+
+            if (req.headers.authorization !== this.authKey) {
+                this.emit('error', 'discord.boats requested with an invalid key');
+                res.statusCode = 403;
+                res.end();
+            }
+
+            if (req.headers['content-type'] !== 'application/json') {
+                this.emit('error', `discord.boats provided an invalid content type (${req.headers['content-type']})`);
+                res.statusCode = 406;
+                res.end();
+            }
+
+            let data = Buffer.alloc(0);
+            req.on('data', chunk =>
+                data = Buffer.concat([data, chunk])
+            );
+
+            req.on('end', async() => {
+                let payload!: any;
+                try {
+                    payload = JSON.parse(data.toString());
+                } catch {
+                    this.emit('error', 'Unable to parse payload');
+                    res.statusCode = 500;
+                    res.end();
+                }
+
+                const user = await this.fetchUser(payload.user.id);
+                const bot = new Bot(payload.bot);
+
+                this.emit('vote', bot, user);
+                this.requests++;
+                await this.storage.addPacket(bot, user);
+
+                res.statusCode = 200;
+                res.end();
+            });
+        } else {
+            this.emit('error', `Invalid method (${req.method}) or path (${req.url})`);
+            res.statusCode = 404;
+            res.end();
+        }
+    }
+}

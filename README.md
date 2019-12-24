@@ -1,15 +1,14 @@
 # Laffey
-
 > **Webhook Handler for [discord.boats](https://discord.boats).**
 >
-> [GitHub](https://github.com/auguwu/laffey) **|** [NPM](https://npmjs.com/package/laffey)
+> [Documentation](https://auguwu.github.io/laffey) **|** [GitHub](https://github.com/auguwu/laffey) **|** [NPM](https://npmjs.com/package/laffey)
 
-## JavaScript Usage
-
+## Example
 ```js
-const { Instance } = require('laffey');
+const { Laffey, MemoryStorage } = require('laffey');
 
-const handler = new Instance({
+const handler = new Laffey({
+    storage: new MemoryStorage(),
     port: 7700,
     auth: 'youshallnotpass',
     path: '/webhook'
@@ -21,43 +20,11 @@ handler
     .listen(); // It listens and emits the listen event /\
 ```
 
-## Typescript Usage
-
-```ts
-import { Instance, DiscordVoter, DiscordBot } from 'laffey';
-
-const handler = new Instance({
-    port: 7700,
-    auth: 'yesowo',
-    path: '/webhook'
-});
-
-handler
-    .on('vote', (voter: DiscordVoter, bot: DiscordBot) => console.log(`${voter.username} has voted ${bot.name}`))
-    .on('listen', () => console.log('Laffey is now listening!'))
-    .listen();
-```
-
-## Contributing
-
-Thanks to contribute to Laffey's repo!
-
-### Process
-
-1) `npm i` or `yarn`
-2) Make code changes
-3) Run `npm run test` or `yarn test`
-4) If everything is ok, pull request
-5) You're done!
-
 ## License
-
-> [laffey](https://github.com/auguwu/laffey) is made by [auguwu](https://augu.me) and is released under the MIT license
->
-> **Laffey is a shipgirl from the game: Azur Lane; all copyrighted infrigment of images belongs to Yostar Inc**
+> Released under the **MIT** License
 
 ```
-Copyright (c) 2019 auguwu
+Copyright (c) 2019 August
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
