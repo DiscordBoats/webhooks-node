@@ -9,9 +9,9 @@
         "url": "https://github.com/auguwu/laffey"
     },
     "devDependencies": {
-        "@types/ioredis": "4.0.12",
+        "@types/ioredis": "4.14.3",
         "@types/node": "12.12.21",
-        "ioredis": "4.11.1",
+        "ioredis": "4.14.1",
         "typescript": "3.5.2",
         "wumpfetch": "0.2.13"
     }
