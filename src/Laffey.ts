@@ -9,7 +9,7 @@ import Storage from './storages/Storage';
 /**
  * Any additional options to add
  */
-interface Options {
+export interface Options {
     /**
      * The authenication key to use
      */
@@ -27,6 +27,11 @@ interface Options {
         enabled: boolean;
         url: string | null;
     }
+
+    /**
+     * Any wumpfetch defaults to set
+     */
+    defaults?: object;
 }
 
 export default class Laffey extends EventEmitter {
@@ -82,9 +87,20 @@ export default class Laffey extends EventEmitter {
         this.server = createServer((req, res) => this.onRequest.apply(this, [req, res]));
         this.port   = port;
         this.path   = path;
+
+        setDefaults(options.defaults ?? {
+            headers: {
+                'User-Agent': `Laffey (https://github.com/auguwu/Laffey, v${require('../package.json').version})`,
+                'Content-Type': 'application/json'
+            }
+        });
     }
 
-    async executeWebhook(payload: any) {
+    listen() {
+        this.server.listen(this.port, () => this.emit('listen'));
+    }
+
+    private async executeWebhook(payload: any) {
         if (!this.webhook.enabled) throw new Error('Discord Webhook is not enabled');
         await get({
             url: `${this.webhook.url!}?wait=true`,
