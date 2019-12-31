@@ -1,7 +1,7 @@
 {
     "name": "laffey",
     "description": "🏢 Webhook handler for discord.boats",
-    "version": "0.1.1",
+    "version": "0.1.2",
     "main": "build/index.js",
     "author": "August <augu@voided.pw>",
     "types": "index.d.ts",
