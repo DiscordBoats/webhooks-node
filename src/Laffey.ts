@@ -81,14 +81,14 @@ export default class Laffey extends EventEmitter {
     constructor(port: number, path: string, options: Options) {
         super();
 
-        this.storage = options.storage ?? new MemoryStorage();
-        this.webhook = options.webhook ?? { enabled: false, url: null };
+        this.storage = options.storage || new MemoryStorage();
+        this.webhook = options.webhook || { enabled: false, url: null };
         this.authKey = options.auth;
         this.server = createServer((req, res) => this.onRequest.apply(this, [req, res]));
         this.port   = port;
         this.path   = path;
 
-        setDefaults(options.defaults ?? {
+        setDefaults(options.defaults || {
             headers: {
                 'User-Agent': `Laffey (https://github.com/auguwu/Laffey, v${require('../package.json').version})`,
                 'Content-Type': 'application/json'
