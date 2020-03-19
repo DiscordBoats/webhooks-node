@@ -18,7 +18,7 @@
         "docs": "rm -fr docs && typedoc && touch docs/.nojekyll"
     },
     "dependencies": {
-        "@augu/immutable": "0.1.6",
+        "@augu/immutable": "0.1.7",
         "wumpfetch": "0.3.1"
     },
     "devDependencies": {
