@@ -12,7 +12,7 @@ export default abstract class Storage {
      * @param name The name
      */
     constructor(name: string) {
-        this.name = name;
+      this.name = name;
     }
 
     /**

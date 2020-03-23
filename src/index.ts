@@ -8,7 +8,7 @@ import * as Storages from './storages';
  * @param options Any additional options
  */
 function Laffey(port: number, path: string, options: Options) {
-    return new Instance(port, path, options);
+  return new Instance(port, path, options);
 }
 
 /**

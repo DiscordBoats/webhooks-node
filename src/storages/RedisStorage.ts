@@ -24,13 +24,13 @@ export default class RedisStorage extends Storage {
      * @param options The redis options
      */
     constructor(options: RedisOptions) {
-        super('redis');
+      super('redis');
 
-        this.interval = null;
-        this.redis    = new RedisClient(options);
-        this.key      = 'votes:{bot}:{user}';
+      this.interval = null;
+      this.redis    = new RedisClient(options);
+      this.key      = 'votes:{bot}:{user}';
         
-        this.start();
+      this.start();
     }
 
     /**
@@ -39,33 +39,33 @@ export default class RedisStorage extends Storage {
      * @param user The user entity
      */
     async addPacket(bot: Bot, user: User) {
-        const key = this.key
-            .replace('{bot}', bot.name)
-            .replace('{user}', user.username);
+      const key = this.key
+        .replace('{bot}', bot.name)
+        .replace('{user}', user.username);
 
-        if (!this.interval) await this.start();
+      if (!this.interval) await this.start();
 
-        const packet = JSON.stringify({
-            bot: bot.toJSON(),
-            user: user.toJSON()
-        });
+      const packet = JSON.stringify({
+        bot: bot.toJSON(),
+        user: user.toJSON()
+      });
 
-        await this.redis.set(key, packet);
+      await this.redis.set(key, packet);
     }
 
     /**
      * Starts the interval and connects to the Redis instance
      */
     async start() {
-        this.interval = setInterval(async() => {
-            const keys = await this.redis.keys(this.key.replace('{bot}:{user}', '*'));
-            const pipeline = this.redis.pipeline();
+      this.interval = setInterval(async() => {
+        const keys = await this.redis.keys(this.key.replace('{bot}:{user}', '*'));
+        const pipeline = this.redis.pipeline();
 
-            pipeline.del(...keys);
-            await pipeline.exec();
-        }, (1000 * 60 * 60 * 24));
+        pipeline.del(...keys);
+        await pipeline.exec();
+      }, (1000 * 60 * 60 * 24));
 
-        /* eslint-disable-next-line */
+      /* eslint-disable-next-line */
         await this.redis.connect().catch(E => {});
     }
 
@@ -73,6 +73,6 @@ export default class RedisStorage extends Storage {
      * Stops the interval
      */
     stop() {
-        if (this.interval) return this.interval.unref();
+      if (this.interval) return this.interval.unref();
     }
 }

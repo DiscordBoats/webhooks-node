@@ -79,96 +79,96 @@ export default class Laffey extends EventEmitter {
      * new Laffey(6969, '/webhook');
      */
     constructor(port: number, path: string, options: Options) {
-        super();
+      super();
 
-        this.storage = options.storage || new MemoryStorage();
-        this.webhook = options.webhook || { enabled: false, url: null };
-        this.authKey = options.auth;
-        this.server = createServer((req, res) => this.onRequest.apply(this, [req, res]));
-        this.port   = port;
-        this.path   = path;
+      this.storage = options.storage || new MemoryStorage();
+      this.webhook = options.webhook || { enabled: false, url: null };
+      this.authKey = options.auth;
+      this.server = createServer((req, res) => this.onRequest.apply(this, [req, res]));
+      this.port   = port;
+      this.path   = path;
 
-        setDefaults(options.defaults || {
-            headers: {
-                'User-Agent': `Laffey (https://github.com/auguwu/Laffey, v${require('../package.json').version})`,
-                'Content-Type': 'application/json'
-            }
-        });
+      setDefaults(options.defaults || {
+        headers: {
+          'User-Agent': `Laffey (https://github.com/auguwu/Laffey, v${require('../package.json').version})`,
+          'Content-Type': 'application/json'
+        }
+      });
     }
 
     listen() {
-        this.server.listen(this.port, () => this.emit('listen'));
+      this.server.listen(this.port, () => this.emit('listen'));
     }
 
     private async executeWebhook(payload: any) {
-        if (!this.webhook.enabled) throw new Error('Discord Webhook is not enabled');
-        await get({
-            url: `${this.webhook.url!}?wait=true`,
-            method: 'POST',
-            data: {
-                embeds: [payload]
-            }
-        }).send();
+      if (!this.webhook.enabled) throw new Error('Discord Webhook is not enabled');
+      await get({
+        url: `${this.webhook.url!}?wait=true`,
+        method: 'POST',
+        data: {
+          embeds: [payload]
+        }
+      }).send();
     }
 
     private async fetchUser(id: string) {
-        const req = await get({
-            url: `https://discord.boats/api/v2/user/${id}`,
-            method: 'GET'
-        }).send();
-        const data = req.json<UserPacket>();
-        return new User(data);
+      const req = await get({
+        url: `https://discord.boats/api/v2/user/${id}`,
+        method: 'GET'
+      }).send();
+      const data = req.json<UserPacket>();
+      return new User(data);
     }
 
     private onRequest(req: IncomingMessage, res: ServerResponse) {
-        if (req.url === this.path && req.method === 'POST') {
-            if (!req.headers.authorization) {
-                this.emit('error', 'No "Authorization" header was provided');
-                res.statusCode = 401;
-                res.end();
-            }
-
-            if (req.headers.authorization !== this.authKey) {
-                this.emit('error', 'discord.boats requested with an invalid key');
-                res.statusCode = 403;
-                res.end();
-            }
-
-            if (req.headers['content-type'] !== 'application/json') {
-                this.emit('error', `discord.boats provided an invalid content type (${req.headers['content-type']})`);
-                res.statusCode = 406;
-                res.end();
-            }
-
-            let data = Buffer.alloc(0);
-            req.on('data', chunk =>
-                data = Buffer.concat([data, chunk])
-            );
-
-            req.on('end', async() => {
-                let payload!: any;
-                try {
-                    payload = JSON.parse(data.toString());
-                } catch {
-                    this.emit('error', 'Unable to parse payload');
-                    res.statusCode = 500;
-                    res.end();
-                }
-
-                const user = await this.fetchUser(payload.user.id);
-                const bot = new Bot(payload.bot);
-
-                this.emit('vote', bot, user);
-                this.requests++;
-                await this.storage.addPacket(bot, user);
-
-                res.statusCode = 200;
-                res.end();
-            });
-        } else {
-            this.emit('error', `Invalid method (${req.method}) or path (${req.url})`);
-            res.statusCode = 404;
-            res.end();
+      if (req.url === this.path && req.method === 'POST') {
+        if (!req.headers.authorization) {
+          this.emit('error', 'No "Authorization" header was provided');
+          res.statusCode = 401;
+          res.end();
         }
+
+        if (req.headers.authorization !== this.authKey) {
+          this.emit('error', 'discord.boats requested with an invalid key');
+          res.statusCode = 403;
+          res.end();
+        }
+
+        if (req.headers['content-type'] !== 'application/json') {
+          this.emit('error', `discord.boats provided an invalid content type (${req.headers['content-type']})`);
+          res.statusCode = 406;
+          res.end();
+        }
+
+        let data = Buffer.alloc(0);
+        req.on('data', chunk =>
+          data = Buffer.concat([data, chunk])
+        );
+
+        req.on('end', async() => {
+          let payload!: any;
+          try {
+            payload = JSON.parse(data.toString());
+          } catch {
+            this.emit('error', 'Unable to parse payload');
+            res.statusCode = 500;
+            res.end();
+          }
+
+          const user = await this.fetchUser(payload.user.id);
+          const bot = new Bot(payload.bot);
+
+          this.emit('vote', bot, user);
+          this.requests++;
+          await this.storage.addPacket(bot, user);
+
+          res.statusCode = 200;
+          res.end();
+        });
+      } else {
+        this.emit('error', `Invalid method (${req.method}) or path (${req.url})`);
+        res.statusCode = 404;
+        res.end();
+      }
     }
 }

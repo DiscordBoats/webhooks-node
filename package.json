@@ -1,37 +1,37 @@
 {
-    "name": "laffey",
-    "description": "🏢 Webhook handler for discord.boats",
-    "version": "0.1.2",
-    "main": "build/index.js",
-    "author": "August <augu@voided.pw>",
-    "types": "index.d.ts",
-    "license": "MIT",
-    "files": ["build/", "index.d.ts"],
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/auguwu/laffey"
-    },
-    "scripts": {
-        "prepare": "yarn docs && yarn build",
-        "build": "yarn lint && rm -fr bulld && tsc",
-        "lint": "eslint src --ext .ts --fix",
-        "docs": "rm -fr docs && typedoc && touch docs/.nojekyll"
-    },
-    "dependencies": {
-        "@augu/immutable": "0.1.7",
-        "wumpfetch": "0.3.1"
-    },
-    "devDependencies": {
-        "@augu/eslint-config": "1.3.3",
-        "@types/node": "12.12.22",
-        "@typescript-eslint/eslint-plugin": "2.24.0",
-        "@typescript-eslint/parser": "2.24.0",
-        "eslint": "6.8.0",
-        "typedoc": "0.17.3",
-        "typescript": "3.8.3"
-    },
-    "optionalDependencies": {
-        "@types/ioredis": "4.14.9",
-        "ioredis": "4.16.0"
-    }
+  "name": "laffey",
+  "description": "🏢 Webhook handler for discord.boats",
+  "version": "0.1.2",
+  "main": "build/index.js",
+  "author": "August <augu@voided.pw>",
+  "types": "index.d.ts",
+  "license": "MIT",
+  "files": ["build/", "index.d.ts"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/auguwu/laffey"
+  },
+  "scripts": {
+    "prepare": "yarn docs && yarn build",
+    "build": "yarn lint && rm -fr build && tsc",
+    "lint": "eslint src --ext .ts --fix",
+    "docs": "rm -fr docs && typedoc && touch docs/.nojekyll"
+  },
+  "dependencies": {
+    "@augu/immutable": "0.1.7",
+    "wumpfetch": "0.3.1"
+  },
+  "devDependencies": {
+    "@augu/eslint-config": "1.3.3",
+    "@types/node": "13.9.3",
+    "@typescript-eslint/eslint-plugin": "2.24.0",
+    "@typescript-eslint/parser": "2.24.0",
+    "eslint": "6.8.0",
+    "typedoc": "0.17.3",
+    "typescript": "3.8.3"
+  },
+  "optionalDependencies": {
+    "@types/ioredis": "4.14.9",
+    "ioredis": "4.16.0"
+  }
 }

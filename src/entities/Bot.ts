@@ -42,19 +42,19 @@ export default class Bot {
      * @param pkt The packet discord.boats send us
      */
     constructor(pkt: BotPacket) {
-        this.avatar = pkt.avatar;
-        this.name   = pkt.name;
-        this.url    = pkt.url;
+      this.avatar = pkt.avatar;
+      this.name   = pkt.name;
+      this.url    = pkt.url;
     }
 
     /**
      * JSONified version of the Bot entity
      */
     toJSON(): BotPacket {
-        return {
-            avatar: this.avatar,
-            name: this.name,
-            url: this.url
-        };
+      return {
+        avatar: this.avatar,
+        name: this.name,
+        url: this.url
+      };
     }
 }

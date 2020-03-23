@@ -40,26 +40,26 @@ export default class User {
      * @param pkt The packet discord.boats sent us
      */
     constructor(pkt: UserPacket) {
-        this.discriminator = pkt.discriminator;
-        this.username      = pkt.username;
-        this.id            = pkt.id;
+      this.discriminator = pkt.discriminator;
+      this.username      = pkt.username;
+      this.id            = pkt.id;
     }
 
     /**
      * Returns the username and discriminator together (i.e: `August#5820`)
      */
     get tag() {
-        return `${this.username}#${this.discriminator}`;
+      return `${this.username}#${this.discriminator}`;
     }
 
     /**
      * Returns a JSONified version of the User entity
      */
     toJSON(): UserPacket {
-        return {
-            discriminator: this.discriminator,
-            username: this.username,
-            id: this.id
-        };
+      return {
+        discriminator: this.discriminator,
+        username: this.username,
+        id: this.id
+      };
     }
 }
