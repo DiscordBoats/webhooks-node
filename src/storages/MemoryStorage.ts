@@ -42,9 +42,8 @@ export default class MemoryStorage extends Storage {
     addPacket(bot: Bot, user: User) {
       if (!this.cache.has(bot.name)) this.cache.set(bot.name, []);
 
-      const packet = this.cache.get(bot.name);
-        packet?.push(user);
-
-        this.cache.set(bot.name, packet!);
+      const packet = this.cache.get(bot.name)!;
+      packet.push(user);
+      this.cache.set(bot.name, packet!);
     }
 }
