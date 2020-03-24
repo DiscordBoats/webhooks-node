@@ -1,21 +1,12 @@
-import Instance, { Options } from './Laffey';
-import * as Storages from './storages';
+import Instance from './Laffey';
+
+const Storages = require('./storages');
 
 /**
- * Creates a new Laffey instance
- * @param port The port to use
- * @param path The path to use
- * @param options Any additional options
- */
-function Laffey(port: number, path: string, options: Options) {
-  return new Instance(port, path, options);
-}
-
-/**
- * Gets the version of Laffey
+ * Gets the current version of Laffey
  */
 export const version: string = require('../package.json').version;
 
-export default Laffey;
-module.exports = Laffey;
+export default Instance;
+module.exports = Instance;
 export { Instance as Laffey, Storages };
