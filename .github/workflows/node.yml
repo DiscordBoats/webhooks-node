@@ -5,16 +5,13 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [10.x, 11.x, 12.x, 13.x]
+        node-version: [8.x, 10.x, 11.x, 12.x, 13.x]
     steps:
       - uses: actions/checkout@v2
-      - name: Installs Node.js v${{ matrix.node-version }}
+      - name: Use Node.js v${{ matrix.node-version }}
         uses: actions/setup-node@v1
         with:
-          node-version: ${{ matrix.node.version }}
-      - name: Installs all global packages
-        run: npm i -g eslint
-      - name: Installs dependencies
-        run: npm i
-      - name: Lints the repository (for any code errors/warnings)
-        run: eslint src --ext .ts --fix
+          node-version: ${{ matrix.node-version }}
+      - run: npm i -g eslint
+      - run: npm i
+      - run: eslint src --ext .ts --fix
