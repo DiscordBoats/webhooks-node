@@ -31,6 +31,6 @@
   },
   "optionalDependencies": {
     "@types/ioredis": "4.14.9",
-    "ioredis": "4.16.1"
+    "ioredis": "4.16.2"
   }
 }
