@@ -223,64 +223,77 @@ declare module 'laffey' {
              * @param user The user object
              */
             public abstract addPacket(bot: Bot, user: User): Promise<void> | void;
+
+            /**
+             * Get the size of the bucket
+             */
+            public size(): number;
         }
-    
-        export namespace Storages {
-            class MemoryStorage extends Storage {
-                /**
-                 * The interval to clear cache to save memory allocation
-                 */
-                private interval: NodeJS.Timer | null;
-            
-                /**
-                 * The cache for the memory storage
-                 */
-                private cache: Collection<User[]>;
-            
-                /**
-                 * Creates a new instance of the memory storage unit
-                 */
-                constructor();
-    
-                /**
-                 * Adds a packet to the storage unit
-                 * @param bot The bot object
-                 * @param user The user object
-                 */
-                public addPacket(bot: Bot, user: User): void;
-            }
-    
-            class RedisStorage extends Storage {
-                /**
-                 * Used to clear the Redis database
-                 */
-                private interval: NodeJS.Timer | null;
-            
-                /**
-                 * The redis instance
-                 */
-                private redis: Redis;
-            
-                /**
-                 * A custom key to find
-                 */
-                public key: string;
-            
-                /**
-                 * Creates a new instance of the Redis Storage unit
-                 * @param options The redis options
-                 */
-                constructor(options: RedisOptions);
-            
-                /**
-                 * Adds a packet to the Redis instance
-                 * @param bot The bot entity
-                 * @param user The user entity
-                 */
-                public addPacket(bot: Bot, user: User): Promise<void>;
-            }
+
+        class MemoryStorage extends Storage {
+          /**
+           * The interval to clear cache to save memory allocation
+           */
+          private interval: NodeJS.Timer | null;
+      
+          /**
+           * The cache for the memory storage
+           */
+          private cache: Collection<User[]>;
+      
+          /**
+           * Creates a new instance of the memory storage unit
+           */
+          constructor();
+
+          /**
+           * Adds a packet to the storage unit
+           * @param bot The bot object
+           * @param user The user object
+           */
+          public addPacket(bot: Bot, user: User): void;
+
+          /**
+           * Get the size of the bucket
+           */
+          public size(): number;
         }
+
+      class RedisStorage extends Storage {
+          /**
+           * Used to clear the Redis database
+           */
+          private interval: NodeJS.Timer | null;
+      
+          /**
+           * The redis instance
+           */
+          private redis: Redis;
+      
+          /**
+           * A custom key to find
+           */
+          public key: string;
+      
+          /**
+           * Creates a new instance of the Redis Storage unit
+           * @param options The redis options
+           */
+          constructor(options: RedisOptions);
+      
+          /**
+           * Adds a packet to the Redis instance
+           * @param bot The bot entity
+           * @param user The user entity
+           */
+          public addPacket(bot: Bot, user: User): Promise<void>;
+
+          /**
+           * Get the size of the bucket
+           */
+          public size(): number;
+      }
     }
 
-    export default Laffey;
+    export = Laffey;
 }

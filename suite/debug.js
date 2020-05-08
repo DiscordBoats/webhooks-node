@@ -1,12 +1,11 @@
-const Laffey = require('../build');
-const Storages = require('../build/storages');
+const { Laffey, MemoryStorage } = require('../build');
 
 const app = new Laffey(6969, '/webhook', {
-  storage: new Storages.MemoryStorage(),
+  storage: new MemoryStorage(),
   auth: 'abcdefg'
 });
 
 app.on('vote', console.log);
-app.on('listen', console.log);
+app.on('listen', () => console.log('Now listening!'));
 
 app.listen();

@@ -75,4 +75,14 @@ export default class RedisStorage extends Storage {
     stop() {
       if (this.interval) return this.interval.unref();
     }
+
+    size() {
+      let size = 0;
+      this.redis.llen(this.key, (error, res) => {
+        if (error) size = 0;
+        else size += res;
+      });
+
+      return size;
+    }
 }

@@ -21,4 +21,9 @@ export default abstract class Storage {
      * @param user The user object
      */
     public abstract addPacket(bot: Bot, user: User): Promise<void> | void;
+
+    /**
+     * Gets the size of the storage bucket
+     */
+    public abstract size(): number;
 }

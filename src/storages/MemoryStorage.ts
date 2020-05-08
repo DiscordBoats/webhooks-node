@@ -46,4 +46,8 @@ export default class MemoryStorage extends Storage {
       packet.push(user);
       this.cache.set(bot.name, packet!);
     }
+
+    size() {
+      return this.cache.size;
+    }
 }

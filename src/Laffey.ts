@@ -111,15 +111,6 @@ export default class Laffey extends EventEmitter {
       }).send();
     }
 
-    private async fetchUser(id: string) {
-      const req = await get({
-        url: `https://discord.boats/api/v2/user/${id}`,
-        method: 'GET'
-      }).send();
-      const data = req.json<UserPacket>();
-      return new User(data);
-    }
-
     private onRequest(req: IncomingMessage, res: ServerResponse) {
       if (req.url === this.path && req.method === 'POST') {
         if (!req.headers.authorization) {
@@ -155,12 +146,17 @@ export default class Laffey extends EventEmitter {
             res.end();
           }
 
-          const user = await this.fetchUser(payload.user.id);
-          const bot = new Bot(payload.bot);
-
-          this.emit('vote', bot, user);
+          this.emit('vote', payload.bot.id, payload.user.id);
           this.requests++;
+
+          const bot = new Bot(payload.bot);
+          const user = new User(payload.user);
+
           await this.storage.addPacket(bot, user);
+          await this.executeWebhook({
+            title: `User ${user.username}#${user.discriminator} has voted for bot ${bot.name}`,
+            description: `Now at ${this.storage.size()} votes today with ${this.requests.toLocaleString()} requests`
+          });
 
           res.statusCode = 200;
           res.end();
