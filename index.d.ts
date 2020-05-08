@@ -98,6 +98,11 @@ declare module 'laffey' {
              * Emitted when the server is listening successfully
              */
             public on(event: 'listen', listener: () => void): this;
+
+            /**
+             * Emitted when a vote is received
+             */
+            public on(event: 'vote', listener: (botID: string, userID: string) => void): this;
         }
     
         /**
