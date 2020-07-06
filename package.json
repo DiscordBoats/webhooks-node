@@ -21,7 +21,7 @@
     "wumpfetch": "0.3.1"
   },
   "devDependencies": {
-    "@augu/eslint-config": "1.4.0",
+    "@augu/eslint-config": "1.6.1",
     "@types/node": "13.13.5",
     "@typescript-eslint/eslint-plugin": "2.31.0",
     "@typescript-eslint/parser": "2.31.0",
