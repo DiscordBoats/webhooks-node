@@ -27,7 +27,7 @@
     "@typescript-eslint/parser": "2.31.0",
     "eslint": "7.0.0",
     "typedoc": "0.17.6",
-    "typescript": "3.8.3"
+    "typescript": "3.9.6"
   },
   "optionalDependencies": {
     "@types/ioredis": "4.16.1",
