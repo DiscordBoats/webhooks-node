@@ -3,11 +3,10 @@
 
 ## Example
 ```js
-const { Server, storages: { MemoryStorage } } = require('laffey');
+const { Server } = require('laffey');
 
 const handler = new Laffey(7700, '/webhook', {
-  storage: new MemoryStorage(),
-  auth: 'youshallnotpass'
+  token: 'youshallnotpass'
 });
 
 handler
