@@ -5,7 +5,7 @@
 ```js
 const { Server, storages: { MemoryStorage } } = require('laffey');
 
-const handler = new Laffey(7700, '/webhook' {
+const handler = new Laffey(7700, '/webhook', {
   storage: new MemoryStorage(),
   auth: 'youshallnotpass'
 });

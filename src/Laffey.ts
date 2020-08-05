@@ -73,6 +73,14 @@ export class Server extends EventEmitter {
    * @param options The additional options
    */
   constructor(port: number, path: string, options: LaffeyOptions) {
+    if (typeof port !== 'number') throw new TypeError('`port` must be a number (https://docs.augu.dev/laffey/errors#constructor-port-is-nan)');
+    if (typeof path !== 'string') throw new TypeError('`path` must be a string (https://docs.augu.dev/laffey/errors#constructor-path-is-not-a-string)');
+    if (typeof options !== 'object' && !Array.isArray(options)) throw new TypeError('`options` must be an object, refer to docs: https://docs.augu.dev/laffey/errors#constructor-not-an-object');
+    
+    const token = getOption<LaffeyOptions, string | undefined>('token', undefined, options);
+    if (token === undefined) throw new TypeError('`token` must be defined in this context (https://docs.augu.dev/laffey/errors#constructor-token-definition)');
+    if (typeof token !== 'string') throw new TypeError('`token` must be a string (https://docs.augu.dev/laffey/errors#constructor-token-not-a-string)');
+
     super();
 
     this.requests = 0;
@@ -101,18 +109,11 @@ export class Server extends EventEmitter {
     
     const url = getOption<{ enabled: boolean; url?: string }, string | undefined>('url', undefined, this.webhook);
     if (url === undefined) throw new TypeError('You need to provide a webhook URL');
-    if (!url.startsWith('https://discord.com/api/webhooks')) throw new TypeError('Webhook URL must start with "https://discord.com/api/webhooks"');
-
     return this.http.request({
       method: 'POST',
       url: `${this.webhook.url}?wait=true`,
       data: { embeds: [payload] }
-    }).then(res => {
-      const data = res.json();
-      console.log(data);
-
-      return true;
-    }).catch(() => false);
+    }).then(() => true).catch(() => false);
   }
 
   /**
@@ -169,10 +170,14 @@ export class Server extends EventEmitter {
           }));
         }
 
-        this.emit('vote', payload.bot.id, payload.user.id);
+        this.emit('vote', payload.bot, payload.user);
         this.requests++;
         await this.sendWebhook({
-          title: `User ${payload.user.username}#${payload.user.discriminator} has voted for bot ${payload.bot.name}`,
+          author: {
+            name: `${payload.user.username}#${payload.user.discriminator} | Voted for ${payload.bot.name}`,
+            icon_url: payload.bot.avatar, // eslint-disable-line
+            url: payload.bot.url
+          },
           footer: {
             text: `Now at ${this.requests.toLocaleString()} requests received!`
           }
