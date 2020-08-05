@@ -30,7 +30,7 @@
     "typescript": "3.8.3"
   },
   "optionalDependencies": {
-    "@types/ioredis": "4.16.1",
-    "ioredis": "4.16.3"
+    "@types/ioredis": "4.17.3",
+    "ioredis": "4.17.3"
   }
 }
