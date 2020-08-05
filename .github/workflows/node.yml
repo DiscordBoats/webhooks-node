@@ -1,5 +1,16 @@
 name: Node.js CI
-on: [push]
+on:
+  push:
+    branches:
+      - 'master'
+      - 'dev'
+      - 'feature/**'
+      - 'side/**'
+    paths-ignore:
+      - 'LICENSE'
+      - '**.md'
+      - '.github/**'
+      - '.vscode/**'
 jobs:
   build:
     runs-on: ubuntu-latest
