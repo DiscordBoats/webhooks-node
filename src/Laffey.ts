@@ -1,170 +1,201 @@
-import { Server, createServer, ServerResponse, IncomingMessage } from 'http';
-import User, { UserPacket } from './entities/User';
-import { get, setDefaults } from 'wumpfetch';
-import Bot, { BotPacket } from './entities/Bot';
-import { EventEmitter } from 'events';
-import MemoryStorage from './storages/MemoryStorage';
-import Storage from './storages/Storage';
-
 /**
- * Any additional options to add
+ * Copyright (c) 2020 August
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  */
-export interface Options {
-    /**
-     * The authenication key to use
-     */
-    auth: string;
 
-    /**
-     * The storage to use (default: MemoryStorage)
-     */
-    storage?: Storage;
+import { Server as HttpServer, ServerResponse, IncomingMessage, createServer } from 'http';
+import { EventEmitter } from 'events';
+import { HttpClient } from '@augu/orchid';
+import { getOption } from './util';
 
-    /**
-     * Webhook options (to send events to)
-     */
-    webhook?: {
-        enabled: boolean;
-        url: string | null;
-    }
-
-    /**
-     * Any wumpfetch defaults to set
-     */
-    defaults?: object;
+interface LaffeyOptions {
+  webhook?: { enabled: boolean; url?: string; }
+  token: string;
 }
 
-export default class Laffey extends EventEmitter {
-    /**
-     * The port to use
-     */
-    public port: number;
+export class Server extends EventEmitter {
+  /**
+   * Amount of requests we have received from discord.boats
+   */
+  public requests: number;
 
-    /**
-     * The path for discord.boats to send packets to
-     */
-    public path: string;
+  /**
+   * The HTTP server to receive messages
+   */
+  private _server: HttpServer;
 
-    /**
-     * The authenication key to use
-     */
-    public authKey: string;
+  /**
+   * The webhook
+   */
+  public webhook: { enabled: boolean; url?: string; }
 
-    /**
-     * The webhook options
-     */
-    public webhook: { enabled: boolean; url: string | null; }
+  /**
+   * The authenication token (can't be get from `eval`)
+   */
+  public token!: string;
 
-    /**
-     * The storage to add packets of data
-     */
-    public storage: Storage;
+  /**
+   * The HTTP client
+   */
+  private http: HttpClient;
 
-    /**
-     * The HTTP server
-     */
-    public server: Server;
+  /**
+   * The path
+   */
+  public path: string;
 
-    /**
-     * How many times discord.boats requested to us
-     */
-    public requests: number = 0;
+  /**
+   * The port to connect to
+   */
+  public port: number;
 
-    /**
-     * Creates a new Laffey instance
-     * @param port The port to use
-     * @param path The path to use
-     * @param options Any additional options
-     * @example
-     * new Laffey(6969, '/webhook');
-     */
-    constructor(port: number, path: string, options: Options) {
-      super();
+  /**
+   * Creates a new [Server]
+   * @param port The port
+   * @param path The path
+   * @param options The additional options
+   */
+  constructor(port: number, path: string, options: LaffeyOptions) {
+    if (typeof port !== 'number') throw new TypeError('`port` must be a number (https://docs.augu.dev/laffey/errors#constructor-port-is-nan)');
+    if (typeof path !== 'string') throw new TypeError('`path` must be a string (https://docs.augu.dev/laffey/errors#constructor-path-is-not-a-string)');
+    if (typeof options !== 'object' && !Array.isArray(options)) throw new TypeError('`options` must be an object, refer to docs: https://docs.augu.dev/laffey/errors#constructor-not-an-object');
+    
+    const token = getOption<LaffeyOptions, string | undefined>('token', undefined, options);
+    if (token === undefined) throw new TypeError('`token` must be defined in this context (https://docs.augu.dev/laffey/errors#constructor-token-definition)');
+    if (typeof token !== 'string') throw new TypeError('`token` must be a string (https://docs.augu.dev/laffey/errors#constructor-token-not-a-string)');
 
-      this.storage = options.storage || new MemoryStorage();
-      this.webhook = options.webhook || { enabled: false, url: null };
-      this.authKey = options.auth;
-      this.server = createServer((req, res) => this.onRequest.apply(this, [req, res]));
-      this.port   = port;
-      this.path   = path;
+    super();
 
-      setDefaults(options.defaults || {
-        headers: {
-          'User-Agent': `Laffey (https://github.com/auguwu/Laffey, v${require('../package.json').version})`,
-          'Content-Type': 'application/json'
-        }
-      });
-    }
+    this.requests = 0;
+    this._server = createServer((req, res) => this.onRequest.apply(this, [req, res]));
+    this.webhook = getOption('webhook', { enabled: false }, options);
+    this.http = new HttpClient();
+    this.port = port;
+    this.path = path;
 
-    listen() {
-      this.server.listen(this.port, () => this.emit('listen'));
-    }
+    Object.defineProperty(this, 'token', { value: options.token });
+  }
 
-    private async executeWebhook(payload: any) {
-      if (!this.webhook.enabled) throw new Error('Discord Webhook is not enabled');
-      await get({
-        url: `${this.webhook.url!}?wait=true`,
-        method: 'POST',
-        data: {
-          embeds: [payload]
-        }
-      }).send();
-    }
+  /**
+   * Listens to the server
+   */
+  listen() {
+    this._server.listen(this.port, () => this.emit('listen'));
+    return this;
+  }
 
-    private onRequest(req: IncomingMessage, res: ServerResponse) {
-      if (req.url === this.path && req.method === 'POST') {
-        if (!req.headers.authorization) {
-          this.emit('error', 'No "Authorization" header was provided');
-          res.statusCode = 401;
-          res.end();
-        }
+  /**
+   * Executes the webhook
+   */
+  private sendWebhook(payload: any) {
+    if (!this.webhook.enabled) return;
+    
+    const url = getOption<{ enabled: boolean; url?: string }, string | undefined>('url', undefined, this.webhook);
+    if (url === undefined) throw new TypeError('You need to provide a webhook URL');
+    return this.http.request({
+      method: 'POST',
+      url: `${this.webhook.url}?wait=true`,
+      data: { embeds: [payload] }
+    }).then(() => true).catch(() => false);
+  }
 
-        if (req.headers.authorization !== this.authKey) {
-          this.emit('error', 'discord.boats requested with an invalid key');
-          res.statusCode = 403;
-          res.end();
-        }
+  /**
+   * Actually does the request for us
+   * @param req The request
+   * @param res The request
+   */
+  private onRequest(req: IncomingMessage, res: ServerResponse) {
+    if (req.url === this.path && req.method === 'POST') {
+      if (!req.headers.authorization) {
+        this.emit('error', 'Didn\'t receive the "Authorization" header');
+        res.statusCode = 401;
 
-        if (req.headers['content-type'] !== 'application/json') {
-          this.emit('error', `discord.boats provided an invalid content type (${req.headers['content-type']})`);
-          res.statusCode = 406;
-          res.end();
-        }
-
-        let data = Buffer.alloc(0);
-        req.on('data', chunk =>
-          data = Buffer.concat([data, chunk])
-        );
-
-        req.on('end', async() => {
-          let payload!: any;
-          try {
-            payload = JSON.parse(data.toString());
-          } catch {
-            this.emit('error', 'Unable to parse payload');
-            res.statusCode = 500;
-            res.end();
-          }
-
-          this.emit('vote', payload.bot.id, payload.user.id);
-          this.requests++;
-
-          const bot = new Bot(payload.bot);
-          const user = new User(payload.user);
-
-          await this.storage.addPacket(bot, user);
-          await this.executeWebhook({
-            title: `User ${user.username}#${user.discriminator} has voted for bot ${bot.name}`,
-            description: `Now at ${this.storage.size()} votes today with ${this.requests.toLocaleString()} requests`
-          });
-
-          res.statusCode = 200;
-          res.end();
-        });
-      } else {
-        this.emit('error', `Invalid method (${req.method}) or path (${req.url})`);
-        res.statusCode = 404;
-        res.end();
+        // TODO: Maybe add customizable messages for this?
+        return res.end(JSON.stringify({
+          success: false,
+          message: 'Missing "Authorization" header'
+        }));
       }
+
+      if (req.headers.authorization !== this.token) {
+        this.emit('error', 'Invalid Authorization header was provided');
+        res.statusCode = 403;
+        return res.end(JSON.stringify({
+          success: false,
+          message: 'Invalid "Authorization" header'
+        }));
+      }
+
+      if (!req.headers['content-type'] || req.headers['content-type'] !== 'application/json') {
+        this.emit('error', `Missing "Content-Type" header or provided an invalid Content-Type (${req.headers['content-type']})`);
+        res.statusCode = 406;
+        return res.end(JSON.stringify({
+          success: false,
+          message: `Missing "Content-Type" header or provided an invalid content type (${req.headers['content-type']})`
+        }));
+      }
+
+      let data = Buffer.alloc(0);
+      req.on('data', chunk => {
+        data = Buffer.concat([data, chunk]);
+      });
+
+      req.on('end', async() => {
+        let payload!: any;
+        try {
+          payload = JSON.parse(data.toString());
+        } catch {
+          this.emit('error', 'Unable to parse payload!');
+          res.statusCode = 500;
+          return res.end(JSON.stringify({
+            success: false,
+            message: 'Payload wasn\'t able to be converted to JSON'
+          }));
+        }
+
+        this.emit('vote', payload.bot, payload.user);
+        this.requests++;
+        await this.sendWebhook({
+          author: {
+            name: `${payload.user.username}#${payload.user.discriminator} | Voted for ${payload.bot.name}`,
+            icon_url: payload.bot.avatar, // eslint-disable-line
+            url: payload.bot.url
+          },
+          footer: {
+            text: `Now at ${this.requests.toLocaleString()} requests received!`
+          }
+        });
+
+        res.statusCode = 200;
+        return res.end(JSON.stringify({
+          success: true
+        }));
+      });
+    } else {
+      this.emit('error', `Invalid path or method (path: ${req.url}; method: ${req.method})`);
+
+      res.statusCode = 405;
+      return res.end(JSON.stringify({
+        success: false,
+        message: 'Method was not a "POST" request'
+      }));
     }
+  }
 }
