@@ -1,17 +1,13 @@
 # Laffey
-> **Webhook Handler for [discord.boats](https://discord.boats).**
->
-> [Documentation](https://auguwu.github.io/laffey) **|** [GitHub](https://github.com/auguwu/laffey) **|** [NPM](https://npmjs.com/package/laffey)
+> :office: **| Webhook handler for [discord.boats](https://discord.boats)**
 
 ## Example
 ```js
-const { Laffey, MemoryStorage } = require('laffey');
+const { Server, storages: { MemoryStorage } } = require('laffey');
 
-const handler = new Laffey({
+const handler = new Laffey(7700, '/webhook' {
   storage: new MemoryStorage(),
-  port: 7700,
-  auth: 'youshallnotpass',
-  path: '/webhook'
+  auth: 'youshallnotpass'
 });
 
 handler
