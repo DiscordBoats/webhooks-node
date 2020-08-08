@@ -5,7 +5,7 @@
 ```js
 const { Server } = require('laffey');
 
-const handler = new Laffey(7700, '/webhook', {
+const handler = new Server(7700, '/webhook', {
   token: 'youshallnotpass'
 });
 
