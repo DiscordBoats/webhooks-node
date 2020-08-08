@@ -38,6 +38,11 @@ declare module 'laffey' {
       public webhook: { enabled: boolean; url?: string; }
 
       /**
+       * How many successful votes Laffey has seen
+       */
+      public votes: number;
+
+      /**
        * The path
        */
       public path: string;
@@ -62,6 +67,11 @@ declare module 'laffey' {
       public listen(): this;
 
       /**
+       * Closes the server down
+       */
+      public close(): void;
+
+      /**
        * Emitted when the user has started the server
        */
       public on(event: 'listen', listener: () => void): this;
@@ -70,6 +80,11 @@ declare module 'laffey' {
        * Emitted when Laffey errored during execution
        */
       public on(event: 'error', listener: (error: string) => void): this;
+
+      /**
+       * Emitted when the server has closed (called by Server#close)
+       */
+      public on(event: 'close', listener: () => void): this;
 
       /**
        * Emitted when Laffey has successfully received a vote
@@ -114,4 +129,6 @@ declare module 'laffey' {
       id: string;
     }
   }
+
+  export = laffey;
 }

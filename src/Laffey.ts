@@ -52,6 +52,11 @@ export class Server extends EventEmitter {
   public token!: string;
 
   /**
+   * How many votes Laffey has received (if it was successful)
+   */
+  public votes: number;
+
+  /**
    * The HTTP client
    */
   private http: HttpClient;
@@ -86,6 +91,7 @@ export class Server extends EventEmitter {
     this.requests = 0;
     this._server = createServer((req, res) => this.onRequest.apply(this, [req, res]));
     this.webhook = getOption('webhook', { enabled: false }, options);
+    this.votes = 0;
     this.http = new HttpClient();
     this.port = port;
     this.path = path;
@@ -99,6 +105,14 @@ export class Server extends EventEmitter {
   listen() {
     this._server.listen(this.port, () => this.emit('listen'));
     return this;
+  }
+
+  /**
+   * Closes the server
+   */
+  close() {
+    this._server.close();
+    this.emit('close');
   }
 
   /**
@@ -122,7 +136,21 @@ export class Server extends EventEmitter {
    * @param res The request
    */
   private onRequest(req: IncomingMessage, res: ServerResponse) {
-    if (req.url === this.path && req.method === 'POST') {
+    this.requests++;
+    const isNotPost = this.path === '/'
+      ? false
+      : req.method! === 'GET';
+
+    if (req.url === '/' && isNotPost) {
+      res.statusCode = 200;
+      return res.end(JSON.stringify({
+        requests: this.requests,
+        votes: this.votes
+      }));
+    } else if (req.url === '/favicon.ico') {
+      res.statusCode = 404;
+      return res.end('Cannot GET /favicon.ico');
+    } else if (req.url === this.path && req.method === 'POST') {
       if (!req.headers.authorization) {
         this.emit('error', 'Didn\'t receive the "Authorization" header');
         res.statusCode = 401;
@@ -171,10 +199,11 @@ export class Server extends EventEmitter {
         }
 
         this.emit('vote', payload.bot, payload.user);
-        this.requests++;
+
+        this.votes++;
         await this.sendWebhook({
           author: {
-            name: `${payload.user.username}#${payload.user.discriminator} | Voted for ${payload.bot.name}`,
+            name: `[ ${payload.user.username}#${payload.user.discriminator} | Voted for ${payload.bot.name} ]`,
             icon_url: payload.bot.avatar, // eslint-disable-line
             url: payload.bot.url
           },
