@@ -1,5 +1,5 @@
 const { Server } = require('../build');
-const server = new Server(7998, '/webhook', {
+const server = new Server(7998, '/', {
   webhook: {
     enabled: true,
     url: 'no'

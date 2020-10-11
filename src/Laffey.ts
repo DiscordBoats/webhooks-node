@@ -25,7 +25,7 @@ import { EventEmitter } from 'events';
 import { HttpClient } from '@augu/orchid';
 import { getOption } from './util';
 
-interface LaffeyOptions {
+export interface LaffeyOptions {
   webhook?: { enabled: boolean; url?: string; }
   token: string;
 }
@@ -137,11 +137,8 @@ export class Server extends EventEmitter {
    */
   private onRequest(req: IncomingMessage, res: ServerResponse) {
     this.requests++;
-    const isNotPost = this.path === '/'
-      ? false
-      : req.method! === 'GET';
 
-    if (req.url === '/' && isNotPost) {
+    if (req.url === '/' && req.method! === 'GET') {
       res.statusCode = 200;
       return res.end(JSON.stringify({
         requests: this.requests,
