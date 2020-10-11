@@ -73,6 +73,10 @@ export const express: Middleware<ExpressOptions> = (options) =>
       case options.path: 
         handle(req, res, next, options);
         break;
+
+      default:
+        next();
+        break;
     }
   };
 
