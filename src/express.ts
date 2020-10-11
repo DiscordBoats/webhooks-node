@@ -70,20 +70,6 @@ type Middleware<T> = (...args: T[])
 export const express: Middleware<ExpressOptions> = (options) =>
   (req, res, next) => {
     switch (req.url) {
-      case '/': {
-        if (req.method === 'GET') { 
-          res.status(200).send('Hello there.');
-          next();
-        } else {
-          next();
-        }
-      } break;
-
-      case '/favicon.ico':
-        res.status(404).send('Cannot GET /favicon.ico');
-        next();
-        break;
-
       case options.path: 
         handle(req, res, next, options);
         break;
