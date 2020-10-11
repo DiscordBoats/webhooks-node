@@ -1,4 +1,5 @@
 declare module 'laffey' {
+  import { Request, Response, NextFunction } from 'express';
   import { EventEmitter } from 'events';
 
   namespace laffey {
@@ -6,6 +7,31 @@ declare module 'laffey' {
      * Returns the version of Laffey
      */
     export const version: string;
+
+    /**
+     * Express middleware for Laffey
+     * @param options The options to use
+     * @example
+    ```js
+       const { express: laffey } = require('laffey');
+       const express = require('express');
+
+       const app = express();
+       app.use(express.json());
+       app.use(laffey({
+        callback: (error, bot, voter) => {
+          if (error) return console.error(error);
+
+          // vote logic is here
+        },
+        token: 'any random token you wanna set',
+        path: '/votes'
+       }));
+
+       app.listen(3000, () => console.log('localhost:3000'));
+      ```
+     */
+    export function express(options: ExpressOptions): ExpressMiddleware;
 
     /**
      * Options avaliable
@@ -128,6 +154,14 @@ declare module 'laffey' {
        */
       id: string;
     }
+
+    interface ExpressOptions {
+      callback(error: Error | null, bot: laffey.BotPacket, voter: laffey.UserPacket): void;
+      token: string;
+      path: string;
+    }
+
+    type ExpressMiddleware = (req: Request, res: Response, next: NextFunction) => void;
   }
 
   export = laffey;

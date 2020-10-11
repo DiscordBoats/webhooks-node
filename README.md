@@ -15,5 +15,25 @@ handler
   .listen(); // It listens and emits the listen event /\
 ```
 
+## Express Example
+```js
+const { express: laffey } = require('laffey');
+const express = require('express');
+
+const app = express();
+app.use(express.json());
+app.use(laffey({
+  callback: (error, bot, voter) => {
+    if (error) return console.error(error);
+
+    // vote logic is here
+  },
+  token: 'any random token you wanna set',
+  path: '/votes'
+}));
+
+app.listen(3000, () => console.log('localhost:3000'));
+```
+
 ## License
 **laffey** is released under the MIT License. Read [here](/LICENSE) for more information.
