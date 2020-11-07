@@ -199,11 +199,7 @@ export class Server extends EventEmitter {
 
         this.votes++;
         await this.sendWebhook({
-          author: {
-            name: `[ ${payload.user.username}#${payload.user.discriminator} | Voted for ${payload.bot.name} ]`,
-            icon_url: payload.bot.avatar, // eslint-disable-line
-            url: payload.bot.url
-          },
+          title: `[ ${payload.user.username}#${payload.user.discriminator} | Voted for ${payload.bot.name} ]`,
           footer: {
             text: `Now at ${this.requests.toLocaleString()} requests received!`
           }

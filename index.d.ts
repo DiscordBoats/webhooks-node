@@ -12,24 +12,24 @@ declare module 'laffey' {
      * Express middleware for Laffey
      * @param options The options to use
      * @example
-    ```js
-       const { express: laffey } = require('laffey');
-       const express = require('express');
-
-       const app = express();
-       app.use(express.json());
-       app.use(laffey({
-        callback: (error, bot, voter) => {
-          if (error) return console.error(error);
-
-          // vote logic is here
-        },
-        token: 'any random token you wanna set',
-        path: '/votes'
-       }));
-
-       app.listen(3000, () => console.log('localhost:3000'));
-      ```
+     * ```js
+     *  const { express: laffey } = require('laffey');
+     *  const express = require('express');
+     *
+     *  const app = express();
+     *  app.use(express.json());
+     *  app.use(laffey({
+     *   callback: (error, bot, voter) => {
+     *     if (error) return console.error(error);
+     *
+     *     // vote logic is here
+     *   },
+     *   token: 'any random token you wanna set',
+     *   path: '/votes'
+     *  }));
+     *
+     *  app.listen(3000, () => console.log('localhost:3000'));
+     * ```
      */
     export function express(options: ExpressOptions): ExpressMiddleware;
 
@@ -123,11 +123,6 @@ declare module 'laffey' {
     */
     interface BotPacket {
       /**
-       * The avatar URL for the bot
-       */
-      avatar: string;
-  
-      /**
        * The bot's name
        */
       name: string;
@@ -135,7 +130,7 @@ declare module 'laffey' {
       /**
        * The URL of the bot (discord.boats URL!)
        */
-      url: string;
+      id: string;
     }
 
     interface UserPacket {
