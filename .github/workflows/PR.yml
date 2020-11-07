@@ -1,0 +1,39 @@
+name: ESLint
+on:
+  push:
+    branches:
+      - 'master'
+      - 'dev'
+      - 'feature/**'
+      - 'side/**'
+    paths-ignore:
+      - 'LICENSE'
+      - '**.md'
+      - '.github/**'
+      - '.vscode/**'
+  pull_request:
+    branches:
+      - 'master'
+      - 'dev'
+      - 'feature/**'
+      - 'side/**'
+    paths-ignore:
+      - 'LICENSE'
+      - '**.md'
+      - '.github/**'
+      - '.vscode/**'
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [10.x, 11.x, 12.x, 13.x, 14.x]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js v${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: npm i -g eslint
+      - run: npm i
+      - run: eslint src --ext .ts --fix

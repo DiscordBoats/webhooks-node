@@ -15,7 +15,6 @@
     "url": "https://github.com/auguwu/laffey"
   },
   "scripts": {
-    "prepare": "yarn build",
     "build": "yarn lint && rm -fr build && tsc",
     "lint": "eslint src --ext .ts --fix"
   },
