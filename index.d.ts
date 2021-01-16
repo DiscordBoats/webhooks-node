@@ -44,13 +44,13 @@ declare module 'laffey' {
 
       /**
        * The authorization token
-       * 
+       *
        * @note `token` is a customisable thing! It can be anything
        * you like it to be set. You must put your token and URL in
        * your bot's page.
        */
       token: string;
-    }    
+    }
 
     export class Server extends EventEmitter {
       /**
@@ -131,7 +131,7 @@ declare module 'laffey' {
        * The bot's name
        */
       name: string;
-  
+
       /**
        * The URL of the bot (discord.boats URL!)
        */
@@ -143,12 +143,12 @@ declare module 'laffey' {
        * The user's discriminator (i.e: `#0001`)
        */
       discriminator: string;
-  
+
       /**
        * The user's username
        */
       username: string;
-  
+
       /**
        * The user's ID
        */
