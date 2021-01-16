@@ -21,7 +21,7 @@
  */
 
 import type { Request, Response, NextFunction } from 'express';
-import type { LaffeyOptions } from './Laffey';
+import orchid from '@augu/orchid';
 
 interface BotPacket {
   /**
@@ -63,16 +63,26 @@ interface ExpressOptions {
   path: string;
 }
 
-type Middleware<T> = (...args: T[]) 
-  => (req: Request, res: Response, next: NextFunction) 
+type Middleware<T> = (...args: T[])
+  => (req: Request, res: Response, next: NextFunction)
     => void;
 
 export const express: Middleware<ExpressOptions> = (options) =>
-  (req, res, next) => {
+  async (req, res, next) => {
     switch (req.url) {
-      case options.path: 
+      case options.path:
         handle(req, res, next, options);
         break;
+
+      case '/test': {
+        if (req.method !== 'GET') return;
+        await orchid.post({
+          method: 'POST',
+          url: options.path
+        });
+
+        next();
+      } break;
 
       default:
         next();

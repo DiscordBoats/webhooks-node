@@ -81,7 +81,7 @@ export class Server extends EventEmitter {
     if (typeof port !== 'number') throw new TypeError('`port` must be a number (https://docs.augu.dev/laffey/errors#constructor-port-is-nan)');
     if (typeof path !== 'string') throw new TypeError('`path` must be a string (https://docs.augu.dev/laffey/errors#constructor-path-is-not-a-string)');
     if (typeof options !== 'object' && !Array.isArray(options)) throw new TypeError('`options` must be an object, refer to docs: https://docs.augu.dev/laffey/errors#constructor-not-an-object');
-    
+
     const token = getOption<LaffeyOptions, string | undefined>('token', undefined, options);
     if (token === undefined) throw new TypeError('`token` must be defined in this context (https://docs.augu.dev/laffey/errors#constructor-token-definition)');
     if (typeof token !== 'string') throw new TypeError('`token` must be a string (https://docs.augu.dev/laffey/errors#constructor-token-not-a-string)');
@@ -120,7 +120,7 @@ export class Server extends EventEmitter {
    */
   private sendWebhook(payload: any) {
     if (!this.webhook.enabled) return;
-    
+
     const url = getOption<{ enabled: boolean; url?: string }, string | undefined>('url', undefined, this.webhook);
     if (url === undefined) throw new TypeError('You need to provide a webhook URL');
     return this.http.request({
@@ -135,10 +135,37 @@ export class Server extends EventEmitter {
    * @param req The request
    * @param res The request
    */
-  private onRequest(req: IncomingMessage, res: ServerResponse) {
+  private async onRequest(req: IncomingMessage, res: ServerResponse) {
     this.requests++;
 
-    if (req.url === '/' && req.method! === 'GET') {
+    if (req.url === '/test' && req.method! === 'GET') {
+      this.emit('debug', 'Testing the serivce, keep looking!');
+      const resp = await this.http.request({
+        method: 'POST',
+        url: `http://localhost:${this.port}${this.path}`,
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        data: {
+          user: {
+            discriminator: '0001',
+            username: 'test user',
+            id: '142781890129059549'
+          },
+          bot: {
+            name: 'test bot',
+            id: '969904951822499487'
+          }
+        }
+      }).header({
+        authorization: this.token
+      });
+
+      this.emit('debug', resp.json());
+
+      res.statusCode = resp.statusCode !== 200 ? 400 : 200;
+      return res.end(JSON.stringify(resp.json()));
+    } else if (req.url === '/' && req.method! === 'GET') {
       res.statusCode = 200;
       return res.end(JSON.stringify({
         requests: this.requests,
