@@ -116,6 +116,11 @@ declare module 'laffey' {
        * Emitted when Laffey has successfully received a vote
        */
       public on(event: 'vote', listener: (bot: laffey.BotPacket, user: laffey.UserPacket) => void): this;
+
+      /**
+       * Emitted when any debug events happen
+       */
+      public on(event: 'debug', listener: (data: any) => void): this;
     }
 
     /**
