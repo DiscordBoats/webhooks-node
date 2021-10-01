@@ -20,6 +20,7 @@
  * SOFTWARE.
  */
 
+
 export const version: string = require('../package.json').version;
 export * from './express';
 export * from './Laffey';
