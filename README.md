@@ -1,3 +1,6 @@
+# DEPRECATED
+The website this module is for has shutdown.
+
 # Laffey
 > :office: **| Webhook handler for [discord.boats](https://discord.boats)**
 
